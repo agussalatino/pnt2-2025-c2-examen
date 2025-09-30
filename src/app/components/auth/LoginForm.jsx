@@ -40,10 +40,25 @@ const LoginForm = () => {
       return;
     }
 
-    const result = await login(formData.email, formData.password);
+    const result = await fetch(`https://backendairbnb-befph8eegzabfudb.eastus2-01.azurewebsites.net/api/users/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: formData.email,
+        password: formData.password
+      }),
+    });
 
     if (result.success) {
-      router.push('/'); // Redirigir al home después del login exitoso
+      const data = await result.json();
+      console.log(data.token);
+      if(data.token){
+        localStorage.setItem('token', data.token);
+        router.push('/'); // Redirigir al home después del login exitoso
+      }
+      
     } else {
       setError(result.error);
     }
